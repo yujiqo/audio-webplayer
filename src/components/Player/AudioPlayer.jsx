@@ -7,11 +7,11 @@ import "./AudioPlayer.css";
 
 const AudioPlayer = () => {
     const audioTagRef = useRef();
-    const audioPlayRef = useRef();
-    const audioPauseRef = useRef();
     const audioName = useRef();
     const audioAuthor = useRef();
     const audioCurrentTimeRef = useRef();
+    const audioPlayRef = useRef();
+    const audioPauseRef = useRef();
 
     const musicPath = "./../../../music/"
     const playList = [
@@ -51,27 +51,81 @@ const AudioPlayer = () => {
 
 
     // Обработчики событий
+    
+    const onCanPlaySyncPlayerState = event => {
+        const newState = {...playerState};
+
+        newState.duration = Math.floor(event.target.duration);
+        newState.currentTime = Math.floor(event.target.currentTime);
+
+        if (newState.isPlaying) audioTagRef.current.play();
+
+        setNewState(newState);
+    };
+
+    const onTimeUpdateSyncAudioDuration = event => {
+        const newState = {...playerState};
+
+        newState.currentTime = Math.floor(event.target.currentTime);
+
+        setNewState(newState);
+    };
 
     const onChangeAudioCurrentTime = event => {
         audioTagRef.current.currentTime = event.target.value;
     };
 
     const onClickPlayAudio = () => {
-        audioPlayRef.current.style.display = "none";
-        audioPauseRef.current.style.display = "block";
+        const newState = {...playerState};
+
+        newState.isPlaying = true;
+
+        setNewState(newState);
 
         audioTagRef.current.play();
+
+        audioPlayRef.current.style.display = "none";
+        audioPauseRef.current.style.display = "inline";
     };
 
-    const onPauseAudio = () => {
-        audioPauseRef.current.style.display = "none";
-        audioPlayRef.current.style.display = "block";
+    const onClickPauseAudio = () => {
+        const newState = {...playerState};
+
+        newState.isPlaying = false;
+
+        setNewState(newState);
 
         audioTagRef.current.pause();
+
+        audioPauseRef.current.style.display = "none";
+        audioPlayRef.current.style.display = "inline";
     };
 
+    const onClickPreviousAudio = () => {
+        const newState = {...playerState};
+        const currentTrackIndex = playList.findIndex(track => track.path === playerState.track.path);
 
-    // Двусвязная синхронизация UI и playerState
+        newState.track = playList[currentTrackIndex - 1 >= 0 ? currentTrackIndex - 1 : playList.length - 1];
+
+        setNewState(newState);
+    };
+
+    const onClickNextAudio = () => {
+        const newState = {...playerState};
+        const currentTrackIndex = playList.findIndex(track => track.path === playerState.track.path);
+
+        newState.track = playList[currentTrackIndex + 1 < playList.length ? currentTrackIndex + 1 : 0];
+
+        setNewState(newState);
+
+    };
+
+    const onEndedAudio = () => {
+        onClickNextAudio();
+    }
+
+
+    // Синхронизация UI и playerState
 
     const syncAudioName = () => {
         audioName.current.innerText = playerState.track.name;
@@ -90,28 +144,22 @@ const AudioPlayer = () => {
         audioCurrentTimeRef.current.innerText = `${currentMin}:${currentSec}/${durationMin}:${durationSec}`;
     };
 
-    const syncPlayerStateOnCanPlayThrough = event => {
-        const newState = {...playerState};
-
-        newState.isPlaying = !event.target.paused;
-        newState.duration = Math.floor(event.target.duration);
-        newState.currentTime = Math.floor(event.target.currentTime);
-
-        setNewState(newState);
-    };
-
-    const syncAudioDuration = event => {
-        const newState = {...playerState};
-
-        newState.currentTime = Math.floor(event.target.currentTime);
-
-        setNewState(newState);
-    };
+    const syncPlayPauseBtns = () => {
+        if (playerState.isPlaying) {
+            audioPlayRef.current.style.display = "none";
+            audioPauseRef.current.style.display = "inline";
+        }
+        else {
+            audioPlayRef.current.style.display = "inline";
+            audioPauseRef.current.style.display = "none";
+        }
+    }
 
     useEffect(() => {
         syncAudioName();
         syncAudioAuthor();
         syncCurrentTime();
+        syncPlayPauseBtns();
     }, [playerState]);
 
 
@@ -123,8 +171,9 @@ const AudioPlayer = () => {
                 <audio
                     ref={audioTagRef}
                     src={playerState.track.path}
-                    onCanPlayThrough={syncPlayerStateOnCanPlayThrough}
-                    onTimeUpdate={syncAudioDuration}
+                    onCanPlay={onCanPlaySyncPlayerState}
+                    onTimeUpdate={onTimeUpdateSyncAudioDuration}
+                    onEnded={onEndedAudio}
                     style={{display: "none"}}
                 ></audio>
                 <div className="track-info">
@@ -139,12 +188,30 @@ const AudioPlayer = () => {
                         value={playerState.currentTime}
                         onChange={onChangeAudioCurrentTime}
                         type="range"
-                        className="track-duration"/>
+                        className="track-duration"
+                    />
                     <div className="track-controls-btns">
-                        <FontAwesomeIcon className="icon track-backward" icon={faBackward}/>
-                        <FontAwesomeIcon ref={audioPlayRef} className="icon track-play" onClick={onClickPlayAudio} icon={faCirclePlay}/>
-                        <FontAwesomeIcon ref={audioPauseRef} className="icon track-pause" onClick={onPauseAudio} icon={faCirclePause}/>
-                        <FontAwesomeIcon className="icon track-forward" icon={faForward}/>
+                        <FontAwesomeIcon
+                            className="icon track-backward"
+                            onClick={onClickPreviousAudio}
+                            icon={faBackward}
+                        />
+                        <FontAwesomeIcon 
+                            className="icon track-play"
+                            ref={audioPlayRef}
+                            onClick={onClickPlayAudio}
+                            icon={faCirclePlay}
+                        />
+                        <FontAwesomeIcon
+                            className="icon track-pause"
+                            ref={audioPauseRef}
+                            onClick={onClickPauseAudio}
+                            icon={faCirclePause}
+                        />
+                        <FontAwesomeIcon
+                            className="icon track-forward"
+                            onClick={onClickNextAudio}
+                            icon={faForward}/>
                     </div>
                     <div className="audio-player-btns">
                         <FontAwesomeIcon className="icon track-shufle" icon={faShuffle}/>

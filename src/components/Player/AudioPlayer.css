@@ -24,16 +24,23 @@ h2, h4 {
 }
 
 
-.audio-player-btns, .track-controls-btns {
-    display: flex;
-    justify-content: space-between;
+.audio-player-btns, .track-control-btns {
     padding: 10px 0;
+}
+
+.audio-player-btns .icon {
+    margin: 0 5px;
+}
+
+
+.track-control-btns {
+    display: flex;
 }
 
 
 .track-controls-btns .icon {
-    width: 35px !important;
-    height: 35px !important;
+    width: 30px;
+    height: 30px;
 }
 
 
@@ -48,8 +55,10 @@ h2, h4 {
 }
 
 
-.track-pause {
-    display: none;
+.track-play, .track-pause {
+    width: 35px !important;
+    height: 35px !important;
+    margin: 0 10px;
 }
 
 
