@@ -62,26 +62,28 @@ const AudioPlayer = () => {
 
     return (
         <div className="audio-player">
-            <audio
-                ref={audioTagRef}
-                src={audioPlayerState.track.path}
-                style={{display: "none"}}
-            ></audio>
-            <div className="track-info">
-                <h2 className="track-name">Track Name</h2>
-                <h4 className="track-author">Track Author</h4>
-            </div>
-            <div className="track-controls">
-                <input ref={audioDurationRef} type="range" className="track-duration"/>
-                <div className="track-controls-btns">
-                    <FontAwesomeIcon className="icon track-backward" icon={faBackward}/>
-                    <FontAwesomeIcon ref={audioPlayRef} className="icon track-play" onClick={playAudio} icon={faCirclePlay}/>
-                    <FontAwesomeIcon ref={audioPauseRef} className="icon track-pause" onClick={pauseAudio} icon={faCirclePause}/>
-                    <FontAwesomeIcon className="icon track-forward" icon={faForward}/>
+            <div className="player">
+                <audio
+                    ref={audioTagRef}
+                    src={audioPlayerState.track.path}
+                    style={{display: "none"}}
+                ></audio>
+                <div className="track-info">
+                    <h2 className="track-name">Track Name</h2>
+                    <h4 className="track-author">Track Author</h4>
                 </div>
-                <div className="audio-player-btns">
-                    <FontAwesomeIcon className="icon track-shufle" icon={faShuffle}/>
-                    <FontAwesomeIcon className="icon track-repeat" icon={faRepeat}/>
+                <div className="track-controls">
+                    <input ref={audioDurationRef} type="range" className="track-duration"/>
+                    <div className="track-controls-btns">
+                        <FontAwesomeIcon className="icon track-backward" icon={faBackward}/>
+                        <FontAwesomeIcon ref={audioPlayRef} className="icon track-play" onClick={playAudio} icon={faCirclePlay}/>
+                        <FontAwesomeIcon ref={audioPauseRef} className="icon track-pause" onClick={pauseAudio} icon={faCirclePause}/>
+                        <FontAwesomeIcon className="icon track-forward" icon={faForward}/>
+                    </div>
+                    <div className="audio-player-btns">
+                        <FontAwesomeIcon className="icon track-shufle" icon={faShuffle}/>
+                        <FontAwesomeIcon className="icon track-repeat" icon={faRepeat}/>
+                    </div>
                 </div>
             </div>
         </div>
