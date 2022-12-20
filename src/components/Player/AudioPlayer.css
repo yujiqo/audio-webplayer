@@ -37,9 +37,13 @@ h2, h4 {
 }
 
 
+.track-current-time {
+    margin: 20px 0 0 0;
+}
+
+
 .track-duration {
     accent-color: #ccc;
-    margin: 20px 0;
     transition: transform 0.5s ease 0s, accent-color 0.5s ease 0s;
 }
 
