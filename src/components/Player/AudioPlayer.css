@@ -1,0 +1,43 @@
+h2, h4 {
+    margin: 0;
+}
+
+
+.icon {
+    width: 20px;
+    height: 20px;
+}
+
+
+.audio-player {
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 40px;
+    background-color: #6C6C6C;
+    text-align: center;
+    padding: 30px;
+}
+
+
+.audio-player-btns, .track-controls-btns {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+
+.track-controls-btns .icon {
+    width: 35px !important;
+    height: 35px !important;
+}
+
+
+.track-duration {
+    accent-color: #fff;
+    margin: 20px 0;
+}
+
+
+.track-pause {
+    display: none;
+}
