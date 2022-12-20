@@ -1,9 +1,12 @@
 import './App.css';
+import AudioPlayer from '../Player/AudioPlayer';
+
+
 
 function App() {
     return (
         <div className="container">
-            <h1>Hello World!</h1>
+            <AudioPlayer/>
         </div>
     );
 }
