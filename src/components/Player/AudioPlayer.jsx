@@ -6,6 +6,13 @@ import "./AudioPlayer.css";
 
 
 const AudioPlayer = () => {
+    const audioTagRef = useRef();
+    const audioPlayRef = useRef();
+    const audioPauseRef = useRef();
+    const audioName = useRef();
+    const audioAuthor = useRef();
+    const audioCurrentTimeRef = useRef();
+
     const musicPath = "./../../../music/"
     const playList = [
         {
@@ -35,18 +42,36 @@ const AudioPlayer = () => {
         },
     ];
 
-    const audioTagRef = useRef();
-    const audioPlayRef = useRef();
-    const audioPauseRef = useRef();
-    const audioName = useRef();
-    const audioAuthor = useRef();
-    const audioCurrentTimeRef = useRef();
     const [playerState, setNewState] = useState({
         isPlaying: false,
         duration: 0,
         currentTime: 0,
         track: playList[0]
     });
+
+
+    // Обработчики событий
+
+    const onChangeAudioCurrentTime = event => {
+        audioTagRef.current.currentTime = event.target.value;
+    };
+
+    const onClickPlayAudio = () => {
+        audioPlayRef.current.style.display = "none";
+        audioPauseRef.current.style.display = "block";
+
+        audioTagRef.current.play();
+    };
+
+    const onPauseAudio = () => {
+        audioPauseRef.current.style.display = "none";
+        audioPlayRef.current.style.display = "block";
+
+        audioTagRef.current.pause();
+    };
+
+
+    // Двусвязная синхронизация UI и playerState
 
     const syncAudioName = () => {
         audioName.current.innerText = playerState.track.name;
@@ -65,7 +90,7 @@ const AudioPlayer = () => {
         audioCurrentTimeRef.current.innerText = `${currentMin}:${currentSec}/${durationMin}:${durationSec}`;
     };
 
-    const setUpPlayerState = event => {
+    const syncPlayerStateOnCanPlayThrough = event => {
         const newState = {...playerState};
 
         newState.isPlaying = !event.target.paused;
@@ -83,29 +108,14 @@ const AudioPlayer = () => {
         setNewState(newState);
     };
 
-    const onChangeAudioCurrentTime = event => {
-        audioTagRef.current.currentTime = event.target.value;
-    };
-
-    const playAudio = () => {
-        audioPlayRef.current.style.display = "none";
-        audioPauseRef.current.style.display = "block";
-
-        audioTagRef.current.play();
-    };
-
-    const pauseAudio = () => {
-        audioPauseRef.current.style.display = "none";
-        audioPlayRef.current.style.display = "block";
-
-        audioTagRef.current.pause();
-    };
-
     useEffect(() => {
         syncAudioName();
         syncAudioAuthor();
         syncCurrentTime();
     }, [playerState]);
+
+
+    // Рендеринг
 
     return (
         <div className="audio-player">
@@ -113,7 +123,7 @@ const AudioPlayer = () => {
                 <audio
                     ref={audioTagRef}
                     src={playerState.track.path}
-                    onCanPlayThrough={setUpPlayerState}
+                    onCanPlayThrough={syncPlayerStateOnCanPlayThrough}
                     onTimeUpdate={syncAudioDuration}
                     style={{display: "none"}}
                 ></audio>
@@ -132,8 +142,8 @@ const AudioPlayer = () => {
                         className="track-duration"/>
                     <div className="track-controls-btns">
                         <FontAwesomeIcon className="icon track-backward" icon={faBackward}/>
-                        <FontAwesomeIcon ref={audioPlayRef} className="icon track-play" onClick={playAudio} icon={faCirclePlay}/>
-                        <FontAwesomeIcon ref={audioPauseRef} className="icon track-pause" onClick={pauseAudio} icon={faCirclePause}/>
+                        <FontAwesomeIcon ref={audioPlayRef} className="icon track-play" onClick={onClickPlayAudio} icon={faCirclePlay}/>
+                        <FontAwesomeIcon ref={audioPauseRef} className="icon track-pause" onClick={onPauseAudio} icon={faCirclePause}/>
                         <FontAwesomeIcon className="icon track-forward" icon={faForward}/>
                     </div>
                     <div className="audio-player-btns">
@@ -145,5 +155,6 @@ const AudioPlayer = () => {
         </div>
     );
 };
+
 
 export default AudioPlayer;
