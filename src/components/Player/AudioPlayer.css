@@ -6,6 +6,8 @@ h2, h4 {
 .icon {
     width: 20px;
     height: 20px;
+    opacity: 0.8;
+    transition: all 0.5s ease 0s;
 }
 
 
@@ -34,10 +36,19 @@ h2, h4 {
 
 .track-duration {
     accent-color: #fff;
+    opacity: 0.8;
     margin: 20px 0;
+    transition: all 0.5s ease 0s;
 }
 
 
 .track-pause {
     display: none;
+}
+
+
+.icon:hover, .track-duration:hover {
+    cursor: pointer;
+    opacity: 1;
+    transform: scale(115%) translateY(-5%);
 }
