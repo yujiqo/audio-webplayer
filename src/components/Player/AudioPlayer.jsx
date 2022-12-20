@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlay, faCirclePause, faShuffle, faRepeat, faForward, faBackward } from "@fortawesome/free-solid-svg-icons";
 import "./AudioPlayer.css";
@@ -31,20 +31,61 @@ const AudioPlayer = () => {
         {
             name: "Saturday Nights",
             author: "Weston Estate",
-            path: musicPath + "Weston_Estate-Saturday_Nights.mp"
+            path: musicPath + "Weston_Estate-Saturday_Nights.mp3"
         },
     ];
 
     const audioTagRef = useRef();
-    const audioDurationRef = useRef();
     const audioPlayRef = useRef();
     const audioPauseRef = useRef();
-    const [audioPlayerState, setNewState] = useState({
+    const audioName = useRef();
+    const audioAuthor = useRef();
+    const audioCurrentTimeRef = useRef();
+    const [playerState, setNewState] = useState({
         isPlaying: false,
         duration: 0,
         currentTime: 0,
         track: playList[0]
     });
+
+    const syncAudioName = () => {
+        audioName.current.innerText = playerState.track.name;
+    };
+
+    const syncAudioAuthor = () => {
+        audioAuthor.current.innerText = playerState.track.author;
+    }
+
+    const syncCurrentTime = () => {
+        const currentMin = Math.floor(playerState.currentTime / 60).toString().padStart(2, 0);
+        const currentSec = Math.floor(playerState.currentTime % 60).toString().padStart(2, 0);
+        const durationMin = Math.floor(playerState.duration / 60).toString().padStart(2, 0);
+        const durationSec = Math.floor(playerState.duration % 60).toString().padStart(2, 0);
+
+        audioCurrentTimeRef.current.innerText = `${currentMin}:${currentSec}/${durationMin}:${durationSec}`;
+    };
+
+    const setUpPlayerState = event => {
+        const newState = {...playerState};
+
+        newState.isPlaying = !event.target.paused;
+        newState.duration = Math.floor(event.target.duration);
+        newState.currentTime = Math.floor(event.target.currentTime);
+
+        setNewState(newState);
+    };
+
+    const syncAudioDuration = event => {
+        const newState = {...playerState};
+
+        newState.currentTime = Math.floor(event.target.currentTime);
+
+        setNewState(newState);
+    };
+
+    const onChangeAudioCurrentTime = event => {
+        audioTagRef.current.currentTime = event.target.value;
+    };
 
     const playAudio = () => {
         audioPlayRef.current.style.display = "none";
@@ -58,22 +99,37 @@ const AudioPlayer = () => {
         audioPlayRef.current.style.display = "block";
 
         audioTagRef.current.pause();
-    }
+    };
+
+    useEffect(() => {
+        syncAudioName();
+        syncAudioAuthor();
+        syncCurrentTime();
+    }, [playerState]);
 
     return (
         <div className="audio-player">
             <div className="player">
                 <audio
                     ref={audioTagRef}
-                    src={audioPlayerState.track.path}
+                    src={playerState.track.path}
+                    onCanPlayThrough={setUpPlayerState}
+                    onTimeUpdate={syncAudioDuration}
                     style={{display: "none"}}
                 ></audio>
                 <div className="track-info">
-                    <h2 className="track-name">Track Name</h2>
-                    <h4 className="track-author">Track Author</h4>
+                    <h2 ref={audioName} className="track-name">Track Name</h2>
+                    <h4 ref={audioAuthor} className="track-author">Track Author</h4>
+                    <h5 ref={audioCurrentTimeRef} className="track-current-time">00:00/00:00</h5>
                 </div>
                 <div className="track-controls">
-                    <input ref={audioDurationRef} type="range" className="track-duration"/>
+                    <input
+                        mix="0"
+                        max={playerState.duration}
+                        value={playerState.currentTime}
+                        onChange={onChangeAudioCurrentTime}
+                        type="range"
+                        className="track-duration"/>
                     <div className="track-controls-btns">
                         <FontAwesomeIcon className="icon track-backward" icon={faBackward}/>
                         <FontAwesomeIcon ref={audioPlayRef} className="icon track-play" onClick={playAudio} icon={faCirclePlay}/>
