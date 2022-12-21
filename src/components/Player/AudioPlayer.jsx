@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCirclePlay, faCirclePause, faShuffle, faRepeat, faForward, faBackward } from "@fortawesome/free-solid-svg-icons";
+import TrackList from "./TrackList";
 import "./AudioPlayer.css";
 
 
@@ -48,6 +49,14 @@ const AudioPlayer = () => {
         currentTime: 0,
         track: playList[0]
     });
+
+    const playDefinedTrack = trackIndex => {
+        const newState = {...playerState};
+
+        newState.track = playList[trackIndex];
+
+        setNewState(newState);
+    };
 
 
     // Обработчики событий
@@ -167,6 +176,8 @@ const AudioPlayer = () => {
 
     return (
         <div className="audio-player">
+            <TrackList playList={playList} currentTrack={playerState.track} playDefinedTrack={playDefinedTrack}/>
+
             <div className="player">
                 <audio
                     ref={audioTagRef}
