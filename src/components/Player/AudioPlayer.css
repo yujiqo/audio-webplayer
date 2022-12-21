@@ -24,12 +24,8 @@ h2, h4 {
 }
 
 
-.audio-player-btns, .track-control-btns {
+.track-control-btns {
     padding: 10px 0;
-}
-
-.audio-player-btns .icon {
-    margin: 0 5px;
 }
 
 

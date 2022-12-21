@@ -213,10 +213,6 @@ const AudioPlayer = () => {
                             onClick={onClickNextAudio}
                             icon={faForward}/>
                     </div>
-                    <div className="audio-player-btns">
-                        <FontAwesomeIcon className="icon track-shufle" icon={faShuffle}/>
-                        <FontAwesomeIcon className="icon track-repeat" icon={faRepeat}/>
-                    </div>
                 </div>
             </div>
         </div>
